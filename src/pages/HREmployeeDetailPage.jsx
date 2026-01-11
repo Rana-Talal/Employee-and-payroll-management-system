@@ -12,6 +12,9 @@ import {
   Printer,
   ArrowLeft
 } from "lucide-react";
+import { Disclosure } from "@headlessui/react";
+import { ChevronUpIcon } from "@heroicons/react/24/solid";
+import { formatNumber } from "../utils/formatNumber";
 
 const BASE_URL = "/api";
 
@@ -81,6 +84,7 @@ export default function HREmployeeDetailPage() {
           c.employeeId === parseInt(employeeId) &&
           c.auditApproved === true
         );
+        console.log('Approved Changes for Employee:', approved);
         setApprovedChanges(approved);
       }
 
@@ -239,102 +243,332 @@ export default function HREmployeeDetailPage() {
           <p className="text-sm text-gray-500">الرقم الوظيفي: {employee.employeeNumber || "—"}</p>
         </div>
 
-        {/* القسم الأول: المعلومات الأساسية (4 أقسام فرعية) */}
+        {/* القسم الأول: المعلومات الأساسية */}
         <SectionCard icon={User} title="المعلومات الأساسية" color="green">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
             {/* المعلومات الشخصية */}
-            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-b-2 border-green-500 pb-2">
-                <User className="h-5 w-5" />
-                المعلومات الشخصية
-              </h3>
-              <InfoRow label="الاسم الكامل" value={fullName} />
-              <InfoRow label="الرقم الوظيفي" value={employee.employeeNumber} />
-              <InfoRow label="تاريخ الميلاد" value={formatDate(employee.birthDate)} />
-              <InfoRow label="الجنس" value={employee.genderName} />
-              <InfoRow label="الحالة الاجتماعية" value={employee.maritalStatusName} />
-              <InfoRow label="رقم الهاتف" value={employee.phonenumber} />
-              <InfoRow label="البريد الإلكتروني" value={employee.email} />
-              <InfoRow label="المنطقة" value={employee.region} />
-              <InfoRow label="المحلة" value={employee.mahalla} />
-              <InfoRow label="رقم الدار" value={employee.houseNumber} />
-            </div>
+            <Disclosure defaultOpen={false}>
+              {({ open }) => (
+                <div className="mb-4">
+                  <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left bg-blue-300 rounded-lg focus:outline-none">
+                    <span className="text-white font-bold">المعلومات الشخصية</span>
+                    <ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-6 w-6 text-white transition duration-150 ease-in-out`} />
+                  </Disclosure.Button>
+                  <Disclosure.Panel className="p-4 bg-white border-t border-gray-200 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">الاسم الكامل</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {fullName}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">الرقم الوظيفي</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.employeeNumber || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">تاريخ الميلاد</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {formatDate(employee.birthDate)}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">الجنس</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.genderName || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">الحالة الاجتماعية</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.maritalStatusName || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.phonenumber || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.email || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">المنطقة</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.region || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">المحلة</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.mahalla || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">رقم الدار</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.houseNumber || "غير محدد"}
+                      </div>
+                    </div>
+                  </Disclosure.Panel>
+                </div>
+              )}
+            </Disclosure>
 
-            {/* التعليم والشهادات */}
-            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-b-2 border-blue-500 pb-2">
-                <GraduationCap className="h-5 w-5" />
-                التعليم والشهادات
-              </h3>
-              <InfoRow label="المستوى التعليمي" value={employee.educationLevelName} />
-              <InfoRow label="التخصص" value={employee.specialization} />
-              <InfoRow label="اسم الكلية/المعهد" value={employee.collegeName} />
-            </div>
+            {/* المعلومات الوظيفية */}
+            <Disclosure defaultOpen={false}>
+              {({ open }) => (
+                <div className="mb-4">
+                  <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left bg-blue-300 rounded-lg focus:outline-none">
+                    <span className="text-white font-bold">المعلومات الوظيفية</span>
+                    <ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-6 w-6 text-white transition duration-150 ease-in-out`} />
+                  </Disclosure.Button>
+                  <Disclosure.Panel className="p-4 bg-white border-t border-gray-200 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">العنوان الوظيفي</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.jobTitle || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">القسم</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.departmentName || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">الفرع</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.branchName || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">الوحدة</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.unitName || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">الدرجة والمرحلة</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.grade && employee.step ? `${employee.grade} / ${employee.step}` : "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">الراتب الأساسي</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.baseSalary ? formatNumber(employee.baseSalary) : "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">تاريخ التعيين</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {formatDate(employee.appointmentOrderDate)}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">رقم أمر التعيين</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.appointmentOrderNumber || "غير محدد"}
+                      </div>
+                    </div>
+                  </Disclosure.Panel>
+                </div>
+              )}
+            </Disclosure>
 
-            {/* معلومات التعيين */}
-            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-b-2 border-purple-500 pb-2">
-                <Briefcase className="h-5 w-5" />
-                معلومات التعيين
-              </h3>
-              <InfoRow label="العنوان الوظيفي" value={employee.jobTitle} />
-              <InfoRow label="القسم" value={employee.departmentName} />
-              <InfoRow label="الفرع" value={employee.branchName} />
-              <InfoRow label="الوحدة" value={employee.unitName} />
-              <InfoRow label="الدرجة" value={employee.grade} />
-              <InfoRow label="المرحلة" value={employee.step} />
-              <InfoRow label="الراتب الأساسي" value={employee.baseSalary ? `${employee.baseSalary.toLocaleString()} د.ع` : "—"} />
-              <InfoRow label="تاريخ التعيين" value={formatDate(employee.appointmentOrderDate)} />
-              <InfoRow label="رقم أمر التعيين" value={employee.appointmentOrderNumber} />
-            </div>
+            {/* المؤهلات العلمية */}
+            <Disclosure defaultOpen={false}>
+              {({ open }) => (
+                <div className="mb-4">
+                  <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left bg-blue-300 rounded-lg focus:outline-none">
+                    <span className="text-white font-bold">المؤهلات العلمية</span>
+                    <ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-6 w-6 text-white transition duration-150 ease-in-out`} />
+                  </Disclosure.Button>
+                  <Disclosure.Panel className="p-4 bg-white border-t border-gray-200 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">المستوى التعليمي</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.educationLevelName || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">التخصص</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.specialization || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">اسم الكلية/المعهد</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.collegeName || "غير محدد"}
+                      </div>
+                    </div>
+                  </Disclosure.Panel>
+                </div>
+              )}
+            </Disclosure>
 
-            {/* المعلومات المصرفية */}
-            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-b-2 border-amber-500 pb-2">
-                <CreditCard className="h-5 w-5" />
-                المعلومات المصرفية
-              </h3>
-              <InfoRow label="اسم البنك" value={employee.bankName} />
-              <InfoRow label="رقم الحساب " value={employee.accountNumber} />
-            </div>
+            {/* المعلومات الإضافية */}
+            <Disclosure defaultOpen={false}>
+              {({ open }) => (
+                <div className="mb-4">
+                  <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left bg-blue-300 rounded-lg focus:outline-none">
+                    <span className="text-white font-bold">المعلومات المصرفية والإضافية</span>
+                    <ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-6 w-6 text-white transition duration-150 ease-in-out`} />
+                  </Disclosure.Button>
+                  <Disclosure.Panel className="p-4 bg-white border-t border-gray-200 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">اسم البنك</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.bankName || "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">رقم الحساب</label>
+                      <div className="border border-gray-300 rounded p-2 bg-gray-50 text-gray-900 font-semibold">
+                        {employee.accountNumber || "غير محدد"}
+                      </div>
+                    </div>
+                  </Disclosure.Panel>
+                </div>
+              )}
+            </Disclosure>
           </div>
         </SectionCard>
 
         {/* القسم الثاني: المخصصات والاستقطاعات المعتمدة */}
         <SectionCard icon={FileText} title="المخصصات والاستقطاعات المعتمدة" color="blue">
-          {approvedChanges.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <FileText className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-              <p>لا توجد مخصصات أو استقطاعات معتمدة</p>
+          <div className="space-y-4">
+              {/* فصل المخصصات والاستقطاعات */}
+              {(() => {
+                const entitlementChanges = approvedChanges.filter(c =>
+                  c.changeTypeName && (
+                    c.changeTypeName.includes("مخصصات") ||
+                    c.changeTypeName.includes("مخصص") ||
+                    c.changeTypeName.includes("زيادة")
+                  )
+                );
+                const deductionChanges = approvedChanges.filter(c =>
+                  c.changeTypeName && (
+                    c.changeTypeName.includes("استقطاع") ||
+                    c.changeTypeName.includes("خصم") ||
+                    c.changeTypeName.includes("حسم")
+                  )
+                );
+
+                return (
+                  <>
+                    {/* المخصصات */}
+                    <Disclosure defaultOpen={true}>
+                      {({ open }) => (
+                        <div className="mb-4">
+                          <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left bg-cyan-800 rounded-lg focus:outline-none">
+                            <span className="text-white font-bold">المخصصات المعتمدة</span>
+                            <ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-6 w-6 text-white transition duration-150 ease-in-out`} />
+                          </Disclosure.Button>
+                          <Disclosure.Panel className="p-4 bg-white border-t border-gray-200">
+                            {entitlementChanges.length === 0 ? (
+                              <div className="text-center py-8 text-gray-500">
+                                <p>لا توجد مخصصات معتمدة</p>
+                              </div>
+                            ) : (
+                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                                {entitlementChanges.map((change, index) => (
+                                  <div key={change.id || index}>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      {change.changeTypeName}
+                                    </label>
+                                    <div className="border border-gray-300 rounded p-2 bg-green-50 text-gray-900 font-semibold">
+                                      {formatNumber(change.amount || 0)}
+                                    </div>
+                                    {change.effectiveDate && (
+                                      <div className="text-xs text-gray-500 mt-1">
+                                        {formatDate(change.effectiveDate)}
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </Disclosure.Panel>
+                        </div>
+                      )}
+                    </Disclosure>
+
+                    {/* الاستقطاعات */}
+                    <Disclosure defaultOpen={true}>
+                      {({ open }) => (
+                        <div className="mb-4">
+                          <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left bg-red-300 rounded-lg focus:outline-none">
+                            <span className="text-red-700 font-bold">الاستقطاعات المعتمدة</span>
+                            <ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-6 w-6 text-red-700 transition duration-150 ease-in-out`} />
+                          </Disclosure.Button>
+                          <Disclosure.Panel className="p-4 bg-white border-t border-gray-200">
+                            {deductionChanges.length === 0 ? (
+                              <div className="text-center py-8 text-gray-500">
+                                <p>لا توجد استقطاعات معتمدة</p>
+                              </div>
+                            ) : (
+                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                                {deductionChanges.map((change, index) => (
+                                  <div key={change.id || index}>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      {change.changeTypeName}
+                                    </label>
+                                    <div className="border border-gray-300 rounded p-2 bg-red-50 text-gray-900 font-semibold">
+                                      {formatNumber(change.amount || 0)}
+                                    </div>
+                                    {change.effectiveDate && (
+                                      <div className="text-xs text-gray-500 mt-1">
+                                        {formatDate(change.effectiveDate)}
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </Disclosure.Panel>
+                        </div>
+                      )}
+                    </Disclosure>
+
+                    {/* التغييرات الأخرى (إن وجدت) */}
+                    {approvedChanges.filter(c =>
+                      !entitlementChanges.includes(c) && !deductionChanges.includes(c)
+                    ).map((change, index) => (
+                      <div key={change.id || index} className="border border-blue-200 rounded-lg p-4 bg-gradient-to-br from-blue-50 to-indigo-50">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <p className="text-xs text-gray-600 mb-1">نوع التغيير</p>
+                            <p className="font-bold text-gray-900">{change.changeTypeName || "—"}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-600 mb-1">المبلغ</p>
+                            <p className="font-bold text-gray-900">{formatNumber(change.amount || 0)}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-600 mb-1">تاريخ التأثير</p>
+                            <p className="font-bold text-gray-900">{formatDate(change.effectiveDate)}</p>
+                          </div>
+                        </div>
+                        {change.notes && (
+                          <div className="mt-3 pt-3 border-t border-blue-200">
+                            <p className="text-xs text-gray-600 mb-1">الملاحظات</p>
+                            <p className="text-sm text-gray-800">{change.notes}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </>
+                );
+              })()}
             </div>
-          ) : (
-            <div className="space-y-4">
-              {approvedChanges.map((change, index) => (
-                <div key={change.id || index} className="border border-blue-200 rounded-lg p-4 bg-gradient-to-br from-blue-50 to-indigo-50">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <p className="text-xs text-gray-600 mb-1">نوع التغيير</p>
-                      <p className="font-bold text-gray-900">{change.changeTypeName || "—"}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-600 mb-1">المبلغ</p>
-                      <p className="font-bold text-gray-900">{change.amount ? `${change.amount.toLocaleString()} د.ع` : "—"}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-600 mb-1">تاريخ التأثير</p>
-                      <p className="font-bold text-gray-900">{formatDate(change.effectiveDate)}</p>
-                    </div>
-                  </div>
-                  {change.notes && (
-                    <div className="mt-3 pt-3 border-t border-blue-200">
-                      <p className="text-xs text-gray-600 mb-1">الملاحظات</p>
-                      <p className="text-sm text-gray-800">{change.notes}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
         </SectionCard>
 
         {/* القسم الثالث: احتساب الخدمة */}

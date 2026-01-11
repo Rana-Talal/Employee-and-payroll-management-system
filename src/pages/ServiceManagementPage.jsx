@@ -28,7 +28,10 @@ export default function ServiceManagementPage() {
         headers: getAuthHeaders(),
       });
       const typesData = await typesRes.json();
-      setServiceTypes(typesData || []);
+
+      // قد تكون البيانات في خاصية items أو data
+      const types = Array.isArray(typesData) ? typesData : (typesData.items || typesData.data || []);
+      setServiceTypes(types);
 
       // جلب الموظفين
       const employeesRes = await fetch(`${BASE_URL}/Employee?PageSize=1000`, {
@@ -100,10 +103,21 @@ export default function ServiceManagementPage() {
   };
 
   const getServiceTypeName = (typeId) => {
-    if (!typeId) return "—";
-    // تحويل إلى رقم للتأكد من التطابق
-    const numericId = parseInt(typeId);
-    const type = serviceTypes.find(t => t.id === numericId || t.id === typeId);
+    if (typeId === null || typeId === undefined) return "—";
+
+    // البحث مع دعم أنواع مختلفة
+    const type = serviceTypes.find(t => {
+      // المقارنة المباشرة
+      if (t.id === typeId) return true;
+
+      // المقارنة بعد التحويل إلى رقم
+      const numericId = Number(typeId);
+      const tNumericId = Number(t.id);
+      if (!isNaN(numericId) && !isNaN(tNumericId) && numericId === tNumericId) return true;
+
+      return false;
+    });
+
     return type ? type.name : "—";
   };
 
@@ -174,7 +188,7 @@ export default function ServiceManagementPage() {
                       <div>
                         <p className="text-xs text-gray-500">نوع الخدمة</p>
                         <p className="font-medium text-gray-800">
-                          {getServiceTypeName(service.serviceType) || `نوع ${service.serviceType}`}
+                          {service.serviceTypeName || getServiceTypeName(service.serviceType || service.serviceTypeId)}
                         </p>
                       </div>
                     </div>
