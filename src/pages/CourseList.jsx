@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-
-const BASE_URL = "http://192.168.11.230:1006/api/Course";
+import api from "../services/api";
 
 const cleanPayload = (data) => {
   const payload = {};
@@ -45,16 +44,14 @@ const CourseManager = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${BASE_URL}?pageSize=1000`); 
-      if (!response.ok) throw new Error("فشل جلب الدورات.");
-      
-      const data = await response.json();
-      
-      const sortedCourses = (data.items || data || []).sort((a, b) => 
-        new Date(b.createdAt) - new Date(a.createdAt)
+      const data = await api.courses.getAll({ PageSize: 1000 });
+
+      const courseList = Array.isArray(data) ? data : data.items || [];
+      const sortedCourses = courseList.sort((a, b) =>
+        new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
       );
 
-      setCourses(sortedCourses); 
+      setCourses(sortedCourses);
     } catch (err) {
       setError(err.message || "خطأ في الاتصال بالخادم.");
       setCourses([]);
@@ -116,38 +113,18 @@ const CourseManager = () => {
     setError(null);
 
     const payload = cleanPayload(formData);
-    
-    const url = isEditing ? `${BASE_URL}/${formData.courseId}` : BASE_URL;
-    const method = isEditing ? "PUT" : "POST";
 
     try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        let errorMsg = `فشل ${isEditing ? 'التحديث' : 'الإضافة'} (الحالة: ${response.status})`;
-        try {
-            const errorData = await response.json();
-            if(errorData.errors) {
-                errorMsg = Object.values(errorData.errors).flat().join(", ");
-            } else if(errorData.title) {
-                errorMsg = errorData.title;
-            } else if(errorData.message) {
-                errorMsg = errorData.message;
-            }
-        } catch { /* تجاهل خطأ قراءة JSON */ }
-        throw new Error(errorMsg);
+      if (isEditing) {
+        await api.courses.update(formData.courseId, payload);
+      } else {
+        await api.courses.create(payload);
       }
 
       alert(`تم ${isEditing ? 'تحديث' : 'إضافة'} الدورة بنجاح!`);
       setFormData(initialFormState);
       setIsEditing(false);
-      fetchCourses(); 
+      fetchCourses();
 
     } catch (err) {
       setError(err.message || "حدث خطأ غير متوقع.");
@@ -164,16 +141,9 @@ const CourseManager = () => {
     setError(null);
 
     try {
-      const response = await fetch(`${BASE_URL}/${courseId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("فشل الحذف. قد تكون الدورة مرتبطة ببيانات أخرى.");
-      }
-
+      await api.courses.delete(courseId);
       alert("تم حذف الدورة بنجاح!");
-      fetchCourses(); 
+      fetchCourses();
 
     } catch (err) {
       setError(err.message || "حدث خطأ أثناء الحذف.");

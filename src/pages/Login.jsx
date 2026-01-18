@@ -111,7 +111,7 @@ export default function Login() {
                       type="text"
                       value={usernameInput}
                       onChange={(e) => setUsernameInput(e.target.value)}
-                      className="relative w-full px-5 py-4 bg-gray-50/50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-300 text-right shadow-inner leading-normal"
+                      className="relative w-full px-5 py-4 pr-12 bg-gray-50/50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-300 text-right shadow-inner leading-normal"
                       placeholder="أدخل اسم المستخدم"
                       required
                     />

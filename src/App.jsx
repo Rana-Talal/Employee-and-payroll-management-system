@@ -46,6 +46,7 @@ import HREmployeeDetailPage from "./pages/HREmployeeDetailPage";
 import AuditEmployeeView from "./pages/AuditEmployeeView";
 import PositionManagement from "./pages/PositionManagement";
 import GradeSalaryManagement from "./pages/GradeSalaryManagement";
+import CourseDetailsPage from "./pages/CourseDetailsPage";
 
 
 export default function App() {
@@ -112,6 +113,7 @@ export default function App() {
                 />
                 {/* <Route path="/add-course" element={<AddCourse />} /> */}
                 <Route path="/courses" element={<CourseList />} />
+                <Route path="/course-details/:courseId" element={<CourseDetailsPage />} />
                 <Route path="/positions" element={<PositionManagement />} />
                 <Route path="/salary-scale" element={<GradeSalaryManagement />} />
                 <Route path="/hr-department" element={<HRDepartmentPage />} />

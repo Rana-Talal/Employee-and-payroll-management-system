@@ -67,20 +67,40 @@ export default function AuditDashboard() {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
+        let employeeList = [];
+        let reportsList = [];
 
         // جلب الموظفين
-        const employeeRes = await fetch(`${BASE_URL}/Employee?PageSize=1000`, {
-          headers: getAuthHeaders(),
-        });
-        const employees = await employeeRes.json();
-        const employeeList = Array.isArray(employees) ? employees : employees.items || [];
+        try {
+          const employeeRes = await fetch(`${BASE_URL}/Employee?PageSize=1000`, {
+            headers: getAuthHeaders(),
+          });
+
+          if (employeeRes.ok) {
+            const employees = await employeeRes.json();
+            employeeList = Array.isArray(employees) ? employees : employees.items || [];
+          } else {
+            console.error("فشل جلب الموظفين:", employeeRes.status);
+          }
+        } catch (error) {
+          console.error("خطأ في جلب الموظفين:", error);
+        }
 
         // جلب تقارير التغييرات
-        const reportsRes = await fetch(`${BASE_URL}/ChangeReports?PageSize=1000`, {
-          headers: getAuthHeaders(),
-        });
-        const reports = await reportsRes.json();
-        const reportsList = Array.isArray(reports) ? reports : reports.items || [];
+        try {
+          const reportsRes = await fetch(`${BASE_URL}/ChangeReports?PageSize=1000`, {
+            headers: getAuthHeaders(),
+          });
+
+          if (reportsRes.ok) {
+            const reports = await reportsRes.json();
+            reportsList = Array.isArray(reports) ? reports : reports.items || [];
+          } else {
+            console.error("فشل جلب التقارير:", reportsRes.status);
+          }
+        } catch (error) {
+          console.error("خطأ في جلب التقارير:", error);
+        }
 
         // حساب الإحصائيات
         setStats({
@@ -92,8 +112,14 @@ export default function AuditDashboard() {
           auditApprovedReports: reportsList.filter(r => r.auditApproved).length,
         });
 
-        // آخر 5 موظفين مضافين
-        const recent = employeeList.slice(0, 5).map(emp => {
+        // آخر 5 موظفين مضافين - ترتيب حسب تاريخ الإضافة (الأحدث أولاً)
+        const sortedEmployees = [...employeeList].sort((a, b) => {
+          const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+          const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+          return dateB - dateA; // الأحدث أولاً
+        });
+
+        const recent = sortedEmployees.slice(0, 5).map(emp => {
           const fullName = emp.fullName || [
             emp.firstName,
             emp.secondName,

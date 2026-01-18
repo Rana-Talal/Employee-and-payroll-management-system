@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import Select from "react-select";
-
-const BASE_URL = "http://192.168.11.230:1006/api";
+import api from "../services/api";
 
 const CourseForm = ({ onAdd, onClose, employeeId }) => {
   const [availableCourses, setAvailableCourses] = useState([]);
@@ -17,12 +16,11 @@ const CourseForm = ({ onAdd, onClose, employeeId }) => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${BASE_URL}/Course?PageSize=1000`);
-        if (!res.ok) throw new Error("فشل جلب قائمة الدورات المتاحة.");
-        
-        const data = await res.json();
-        const mappedCourses = (data.items || []).map(c => ({
-          value: c.courseId, 
+        const data = await api.courses.getAll({ PageSize: 1000 });
+
+        const courseList = Array.isArray(data) ? data : data.items || [];
+        const mappedCourses = courseList.map(c => ({
+          value: c.courseId,
           label: `${c.courseName} (${c.teacher || 'مدرس غير محدد'})`,
           courseData: c,
         }));
@@ -64,27 +62,7 @@ const CourseForm = ({ onAdd, onClose, employeeId }) => {
     };
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${BASE_URL}/CourseEmployee`, {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-              ...(token && { Authorization: `Bearer ${token}` })
-          },
-          body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-          let errorText = await res.text();
-          let errorMessage = "فشل غير معروف في ربط الدورة.";
-          try {
-              const errorData = JSON.parse(errorText);
-              errorMessage = errorData.title || errorData.message || Object.values(errorData.errors || {}).flat().join(", ") || errorMessage;
-          } catch {}
-          throw new Error(errorMessage);
-      }
-
-      const newCourseEmployeeLink = await res.json(); 
+      const newCourseEmployeeLink = await api.courses.enrollEmployee(payload);
       const selectedCourse = availableCourses.find(c => c.value === selectedCourseId)?.courseData;
 
       const newCourseData = {
