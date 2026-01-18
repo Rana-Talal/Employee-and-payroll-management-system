@@ -6,7 +6,7 @@ import payroll from "../assets/payroll.png";
 function parseJwt(token) {
   try {
     return JSON.parse(atob(token.split('.')[1]));
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -176,7 +176,7 @@ export default function Login() {
                       "تسجيل الدخول"
                     )}
                   </span>
-                  <div className="absolute inset-0 bg-gradient-to-r to-blue-950 to-blue-600 opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-950 to-blue-600 opacity-0 group-hover:opacity-100 transition duration-300"></div>
                 </button>
               </form>
 

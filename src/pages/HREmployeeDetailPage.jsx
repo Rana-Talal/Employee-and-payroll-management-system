@@ -1,14 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   User,
-  GraduationCap,
-  Briefcase,
-  CreditCard,
   FileText,
   Calendar,
   Award,
-  Building2,
   Printer,
   ArrowLeft
 } from "lucide-react";
@@ -51,11 +47,7 @@ export default function HREmployeeDetailPage() {
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [employeeId]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -125,9 +117,13 @@ export default function HREmployeeDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [employeeId, navigate]);
 
   const [serviceTypes, setServiceTypes] = useState([]);
+
+  useEffect(() => {
+    fetchData();
+  }, [employeeId, fetchData]);
 
   const getServiceTypeName = (typeId) => {
     if (!typeId) return "—";
@@ -157,7 +153,8 @@ export default function HREmployeeDetailPage() {
     );
   };
 
-  const SectionCard = ({ icon: Icon, title, children, color = "green" }) => {
+  // eslint-disable-next-line no-unused-vars
+  const SectionCard = ({ icon: IconComponent, title, children, color = "green" }) => {
     const colorClasses = {
       green: "from-green-600 to-emerald-600",
       blue: "from-blue-600 to-indigo-600",
@@ -168,7 +165,7 @@ export default function HREmployeeDetailPage() {
     return (
       <div className="bg-white rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden mb-6">
         <div className={`bg-gradient-to-r ${colorClasses[color]} text-white px-6 py-4 flex items-center gap-3`}>
-          <Icon className="h-6 w-6" />
+          <IconComponent className="h-6 w-6" />
           <h2 className="text-xl font-bold">{title}</h2>
         </div>
         <div className="p-6">
